@@ -1,18 +1,17 @@
 # ᗧ···ᗣ···ᗣ Pacman Game - C & Raylib
 
-> Una recreación del clásico juego de arcade, desarrollada desde cero para entender los fundamentos de la programación de videojuegos y la Inteligencia Artificial.
+> Un tributo al legendario arcade de 1980 creado por Toru Iwatani (Namco), reprogramado desde cero para fines educativos.
 
 ![Status](https://img.shields.io/badge/Estado-En_Desarrollo-yellow)
 ![Lenguaje](https://img.shields.io/badge/Lenguaje-C-blue)
 ![Librería](https://img.shields.io/badge/Librería-Raylib-red)
 
 ## 📋 Sobre el Proyecto
-Este proyecto es una implementación del famoso juego **Pacman** escrito completamente en **C**. Utiliza la librería **Raylib** para el manejo de gráficos y entrada del usuario. 
+Este proyecto es una recreación educativa del clásico **Pac-Man**. El objetivo es replicar las mecánicas del juego original utilizando **C puro** y la librería **Raylib**, sirviendo como práctica avanzada de:
 
-El objetivo principal es aplicar conceptos de:
-* Lógica de programación estructurada.
-* Manejo de sprites y colisiones.
-* Algoritmos de movimiento (Fantasmas/IA).
+* Lógica de videojuegos y ciclo de juego (Game Loop).
+* Inteligencia Artificial básica (comportamiento de los fantasmas).
+* Gestión de matrices y colisiones.
 
 ## 🎮 Controles
 
@@ -28,6 +27,10 @@ El objetivo principal es aplicar conceptos de:
 ## 🛠️ Tecnologías Usadas
 * **Lenguaje:** C (Standard C99/C11)
 * **Gráficos:** [Raylib](https://www.raylib.com/)
-* **IDE/Editor:** Visual Studio Code / Visual Studio
+* **IDE:** Visual Studio Code / Visual Studio
 
+---
+### ⚠️ Disclaimer
+Este software es un proyecto estudiantil sin fines de lucro. **Pac-Man** es una marca registrada de **Bandai Namco Entertainment**. Todos los derechos de los personajes y el diseño original pertenecen a sus respectivos dueños.
 
+⌨️ Desarrollado con ❤️ por [DiegoTesenSosa123](https://github.com/DiegoTesenSosa123)
