@@ -30,9 +30,4 @@ El objetivo principal es aplicar conceptos de:
 * **Gráficos:** [Raylib](https://www.raylib.com/)
 * **IDE/Editor:** Visual Studio Code / Visual Studio
 
-## 📸 Capturas del Juego
-*(¡Reemplaza este texto con una captura de pantalla de tu juego funcionando para que se vea increíble!)*
-> ![Gameplay Demo](URL_DE_TU_IMAGEN_AQUI)
 
----
-⌨️ con ❤️ por [DiegoTesenSosa123](https://github.com/DiegoTesenSosa123)
