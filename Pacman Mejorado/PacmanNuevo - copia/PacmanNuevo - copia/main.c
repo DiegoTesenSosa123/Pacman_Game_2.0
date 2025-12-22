@@ -9,14 +9,19 @@
 
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
+// --- CORRECCIÓN DEL ERROR MIN ---
+// Esta macro es necesaria para que funcione la lógica de escalado
+#ifndef MIN
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#endif
+// --------------------------------
+
 #define MAX_PROJECTILES 10
 
-// Definimos CYAN para que puedas usarlo en la barra de volumen sin errores
 #ifndef CYAN
 #define CYAN (Color){ 0, 255, 255, 255 }
 #endif
 
-// Variables Globales
 char maze[MAZE_HEIGHT][MAZE_WIDTH];
 char initialmaze_copy[MAZE_HEIGHT][MAZE_WIDTH];
 Projectile bullets[MAX_PROJECTILES] = { 0 };
@@ -24,7 +29,6 @@ Projectile bullets[MAX_PROJECTILES] = { 0 };
 char playerName[20] = "\0";
 int letterCount = 0;
 
-// --- FUNCIONES AUXILIARES ---
 void SpawnFireball(Vector2 pos, Direction dir) {
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (!bullets[i].active) {
@@ -82,17 +86,20 @@ void ResetAndSpawnItems(char currentMaze[MAZE_HEIGHT][MAZE_WIDTH], PacmanClass p
 }
 
 int main(void) {
-    // 1. CONFIGURACIÓN DE VENTANA
+    // 1. Configuración para permitir pantalla completa/escalado
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, "PAC-MAN FINAL");
+
+    // 2. Creamos la "Pantalla Virtual"
+    RenderTexture2D target = LoadRenderTexture(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+    SetTextureFilter(target.texture, TEXTURE_FILTER_POINT); // Pixel art nítido
 
     SetTargetFPS(60);
     InitAudioDevice();
 
-    // VARIABLE DE VOLUMEN
     float masterVolume = 0.5f;
     SetMasterVolume(masterVolume);
 
-    // --- CARGA DE RECURSOS ---
     for (int i = 0; i < MAZE_HEIGHT; i++) for (int j = 0; j < MAZE_WIDTH; j++) initialmaze_copy[i][j] = initialmaze[i][j];
 
     Texture2D pacmanLogo = LoadTexture(UI_LOGO_PACMAN);
@@ -129,12 +136,10 @@ int main(void) {
     fantasmas[3] = Ghost_Init(CLYDE, tClyde, tFrightened, tFrightenedWhite, tEyes);
 
     while (!WindowShouldClose()) {
-        // Lógica Global de Audio
         if (IsKeyPressed(KEY_P) && (currentScreen == SCREEN_GAMEPLAY || currentScreen == SCREEN_PAUSE)) {
             currentScreen = (currentScreen == SCREEN_GAMEPLAY) ? SCREEN_PAUSE : SCREEN_GAMEPLAY;
         }
 
-        // --- AQUÍ ESTÁ EL CAMBIO PARA QUE SUENE EN RANKING (SCREEN_HIGHSCORES) ---
         if (!IsSoundPlaying(introMusic) && (currentScreen == SCREEN_TITLE || currentScreen == SCREEN_CLASS_SELECT || currentScreen == SCREEN_INSTRUCTIONS || currentScreen == SCREEN_SETTINGS || currentScreen == SCREEN_HIGHSCORES)) {
             PlaySound(introMusic); SetSoundVolume(introMusic, 0.6f);
         }
@@ -142,9 +147,24 @@ int main(void) {
             StopSound(introMusic);
         }
 
-        // --- DIBUJADO DIRECTO ---
-        BeginDrawing();
-        ClearBackground(BLACK);
+        // ==========================================
+        // CÁLCULO DEL ESCALADO (CENTRAR PANTALLA)
+        // ==========================================
+        float scale = MIN((float)GetScreenWidth() / GAME_SCREEN_WIDTH, (float)GetScreenHeight() / GAME_SCREEN_HEIGHT);
+        Rectangle sourceRect = { 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height };
+        Rectangle destRect = {
+            (GetScreenWidth() - (GAME_SCREEN_WIDTH * scale)) * 0.5f,
+            (GetScreenHeight() - (GAME_SCREEN_HEIGHT * scale)) * 0.5f,
+            GAME_SCREEN_WIDTH * scale,
+            GAME_SCREEN_HEIGHT * scale
+        };
+        Vector2 origin = { 0.0f, 0.0f };
+
+        // ==========================================
+        // DIBUJAR TODO DENTRO DE LA PANTALLA VIRTUAL
+        // ==========================================
+        BeginTextureMode(target);
+        ClearBackground(BLACK); // Fondo negro DENTRO del juego
 
         switch (currentScreen) {
         case SCREEN_TITLE:
@@ -155,7 +175,6 @@ int main(void) {
         case SCREEN_SETTINGS:
         {
             Menu_DrawSettings(&currentScreen);
-
             if (IsKeyDown(KEY_RIGHT)) {
                 masterVolume += 0.01f;
                 if (masterVolume > 1.0f) masterVolume = 1.0f;
@@ -167,6 +186,7 @@ int main(void) {
                 SetMasterVolume(masterVolume);
             }
 
+            // Usamos GAME_SCREEN_WIDTH para asegurar que la barra se centre en el juego, no en la ventana
             int barY = 180;
             int barWidth = 300;
             int barX = GAME_SCREEN_WIDTH / 2 - barWidth / 2;
@@ -261,11 +281,14 @@ int main(void) {
             for (int i = 0; i < 4; i++) Ghost_Draw(&fantasmas[i]);
             for (int i = 0; i < MAX_PROJECTILES; i++) if (bullets[i].active) DrawCircleV(bullets[i].pos, 4, ORANGE);
 
+            // IMPORTANTE: Usamos GAME_SCREEN_WIDTH en lugar de GetScreenWidth() para que el HUD se quede pegado al mapa
             DrawText(TextFormat("ROUND: %i / %i", currentRound, maxRounds), 10, MAZE_HEIGHT * TILE_SIZE + 10, 20, SKYBLUE);
             DrawText(TextFormat("CLASS: %s", pacman.type == CLASS_TANK ? "TANK" : (pacman.type == CLASS_SPEED ? "SPEED" : "NORMAL")), 10, MAZE_HEIGHT * TILE_SIZE + 30, 20, SKYBLUE);
             DrawText(TextFormat("AMMO: %i", pacman.ammo), 200, MAZE_HEIGHT * TILE_SIZE + 30, 20, ORANGE);
-            DrawText(TextFormat("LIVES: %i", pacman.lives), GetScreenWidth() - 100, MAZE_HEIGHT * TILE_SIZE + 10, 20, RED);
-            DrawText(TextFormat("SCORE: %i", pacman.score), GetScreenWidth() - 100, MAZE_HEIGHT * TILE_SIZE + 30, 20, YELLOW);
+
+            // Alineamos Vidas y Puntaje a la derecha del MAPA, no de la ventana
+            DrawText(TextFormat("LIVES: %i", pacman.lives), GAME_SCREEN_WIDTH - 100, MAZE_HEIGHT * TILE_SIZE + 10, 20, RED);
+            DrawText(TextFormat("SCORE: %i", pacman.score), GAME_SCREEN_WIDTH - 100, MAZE_HEIGHT * TILE_SIZE + 30, 20, YELLOW);
         } break;
 
         case SCREEN_PAUSE:
@@ -303,10 +326,18 @@ int main(void) {
             break;
         }
 
+        EndTextureMode(); // Fin del dibujo en la pantalla virtual
+
+        // ==========================================
+        // DIBUJAR LA PANTALLA VIRTUAL EN LA VENTANA
+        // ==========================================
+        BeginDrawing();
+        ClearBackground(BLACK); // Dibuja las barras negras
+        DrawTexturePro(target.texture, sourceRect, destRect, origin, 0.0f, WHITE);
         EndDrawing();
     }
 
-    // LIMPIEZA
+    UnloadRenderTexture(target);
     UnloadSound(introMusic); UnloadSound(startMusic); UnloadSound(sirenSound); UnloadSound(deathSound); UnloadSound(powerSound);
     UnloadTexture(tBlinky); UnloadTexture(tPinky); UnloadTexture(tInky); UnloadTexture(tClyde);
     UnloadTexture(tFrightened); UnloadTexture(tFrightenedWhite); UnloadTexture(tEyes);

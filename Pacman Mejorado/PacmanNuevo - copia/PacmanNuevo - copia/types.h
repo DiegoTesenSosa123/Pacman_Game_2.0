@@ -3,28 +3,20 @@
 
 #include "raylib.h"
 
-// =========================================================
-// DIMENSIONES GLOBALES
-// =========================================================
+// Defino la matriz logica del juego 
 #define MAZE_WIDTH 28
 #define MAZE_HEIGHT 31
 #define TILE_SIZE 20
 
-// --- ESTO ES LO QUE TE FALTA ---
-// Resolución virtual del juego
-#define GAME_SCREEN_WIDTH   (MAZE_WIDTH * TILE_SIZE)       
+#define GAME_SCREEN_WIDTH   (MAZE_WIDTH * TILE_SIZE)      
+// Añado mas espacio para la HUD (Puntaje y vidas)
 #define GAME_SCREEN_HEIGHT  (MAZE_HEIGHT * TILE_SIZE + 50) 
-// ------------------------------
 
-// =========================================================
-// ENUMS (Listas de Opciones)
-// =========================================================
 
-// Movemos GameScreen aquí para que menu.h pueda usarlo
-// En types.h (dentro del enum GameScreen)
+// Creamos los tipos de datos que usaremos en nuestro codigo para poder trabajar mas fluido
 typedef enum {
     SCREEN_TITLE,
-    SCREEN_SETTINGS, 
+    SCREEN_SETTINGS,
     SCREEN_CLASS_SELECT,
     SCREEN_INSTRUCTIONS,
     SCREEN_HIGHSCORES,
@@ -55,12 +47,14 @@ typedef enum {
     GHOST_STATE_WAITING
 } GhostState;
 
-// Estructuras auxiliares
+// Estructuras aux para saber el posicionamiento dentro de la matriz del juego 
 typedef struct {
     int row;
     int col;
 } Vector2Int;
 
+
+// Estructura para la fisica de los disparos (Clase Tank)
 typedef struct {
     Vector2 pos;
     Vector2 velocity;
