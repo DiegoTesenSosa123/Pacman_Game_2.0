@@ -19,26 +19,21 @@ typedef struct {
 // IMPLEMENTACIÓN DE HERRAMIENTAS VISUALES
 // =========================================================
 
-// NOTA IMPORTANTE:
-// Cambiamos GetScreenWidth() por GAME_SCREEN_WIDTH para asegurar
-// que todo se dibuje relativo al tamaño virtual del juego (el mapa),
-// y no al tamaño de la ventana de Windows.
 
 void DrawTextCentered(const char* text, int y, int fontSize, Color color) {
     int textWidth = MeasureText(text, fontSize);
-    // Centramos usando el ancho del JUEGO, no de la ventana
     DrawText(text, GAME_SCREEN_WIDTH / 2 - textWidth / 2, y, fontSize, color);
 }
 
 void DrawButtonCentered(const char* text, int y, int fontSize, Color color) {
     int fixedWidth = 450;
 
-    // Ajuste de seguridad: si el botón es más ancho que la pantalla del juego, lo achicamos
     if (fixedWidth > GAME_SCREEN_WIDTH - 20) fixedWidth = GAME_SCREEN_WIDTH - 40;
 
     int paddingY = 10;
     int rectHeight = fontSize + (paddingY * 2);
 
+    // para centrar 
     int rectX = (GAME_SCREEN_WIDTH / 2) - (fixedWidth / 2);
     int rectY = y - paddingY;
 
@@ -142,33 +137,53 @@ void Menu_DrawSettings(GameScreen* currentScreen) {
     DrawTextCentered("CONFIGURACION", 60, 40, YELLOW);
     DrawLine(50, 110, GAME_SCREEN_WIDTH - 50, 110, GRAY);
 
+    // 1. DEFINICIÓN DE RESOLUCIONES
     static int resIndex = 0;
+
     const int widths[] = { GAME_SCREEN_WIDTH, 1280, 1920 };
     const int heights[] = { GAME_SCREEN_HEIGHT, 720, 1080 };
     const char* resNames[] = { "ORIGINAL (Ventana)", "HD 720p", "FULL HD 1080p" };
 
+    // 2. SECCIÓN VOLUMEN
     DrawTextCentered("AJUSTE DE VOLUMEN", 140, 25, CYAN);
     DrawTextCentered("Usa las flechas Izquierda / Derecha", 220, 20, LIGHTGRAY);
 
+    // 3. SECCIÓN RESOLUCIÓN
     DrawTextCentered("TAMAÑO DE PANTALLA", 280, 25, CYAN);
 
-    if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_RIGHT)) {
+    // LÓGICA DE CAMBIO DE RESOLUCIÓN + CENTRADO
+    // Solo usamos ARRIBA/ABAJO para evitar conflictos con el volumen
+    if (IsKeyPressed(KEY_UP)) {
         resIndex++;
         if (resIndex > 2) resIndex = 0;
+
         SetWindowSize(widths[resIndex], heights[resIndex]);
-        // Sin SetWindowPosition para no mover la ventana del usuario
+
+        // CENTRADO AUTOMÁTICO EN EL MONITOR
+        // Esto coloca la ventana justo en el medio de tu pantalla física
+        SetWindowPosition(
+            (GetMonitorWidth(0) - widths[resIndex]) / 2,
+            (GetMonitorHeight(0) - heights[resIndex]) / 2
+        );
     }
 
-    if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_LEFT)) {
+    if (IsKeyPressed(KEY_DOWN)) {
         resIndex--;
         if (resIndex < 0) resIndex = 2;
+
         SetWindowSize(widths[resIndex], heights[resIndex]);
+
+        // CENTRADO AUTOMÁTICO EN EL MONITOR
+        SetWindowPosition(
+            (GetMonitorWidth(0) - widths[resIndex]) / 2,
+            (GetMonitorHeight(0) - heights[resIndex]) / 2
+        );
     }
 
     Color resColor = (resIndex == 0) ? GREEN : ((resIndex == 1) ? ORANGE : GOLD);
     DrawTextCentered(TextFormat("< %s >", resNames[resIndex]), 320, 25, resColor);
     DrawTextCentered(TextFormat("(%i x %i)", widths[resIndex], heights[resIndex]), 350, 20, DARKGRAY);
-    DrawTextCentered("Usa Flechas para cambiar", 390, 20, LIGHTGRAY);
+    DrawTextCentered("Usa Arriba / Abajo para cambiar", 390, 20, LIGHTGRAY);
 
     DrawButtonCentered("PRESIONA 'S' PARA VOLVER", 500, 20, ORANGE);
 
