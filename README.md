@@ -1,19 +1,44 @@
-# ᗧ···ᗣ···ᗣ Pacman Game - C & Raylib
+# ᗧ···ᗣ···ᗣ Pac-Man 2.0: Enhanced Clone
 
-> Un tributo al legendario arcade de 1980 creado por Toru Iwatani (Namco), reprogramado desde cero para fines educativos.
+> Un tributo al legendario arcade de 1980, reprogramado desde cero en C con mecánicas avanzadas, IA de estados y sistema de escalado dinámico.
 
-![Status](https://img.shields.io/badge/Estado-En_Desarrollo-yellow)
-![Lenguaje](https://img.shields.io/badge/Lenguaje-C-blue)
+![Status](https://img.shields.io/badge/Estado-Completado-success)
+![Lenguaje](https://img.shields.io/badge/Lenguaje-C99-blue)
 ![Librería](https://img.shields.io/badge/Librería-Raylib-red)
+![Licencia](https://img.shields.io/badge/Licencia-MIT-green)
 
 ## 📋 Sobre el Proyecto
-Este proyecto es una recreación educativa del clásico **Pac-Man**. El objetivo es replicar las mecánicas del juego original utilizando **C puro** y la librería **Raylib**, sirviendo como práctica avanzada de:
+Este proyecto es una recreación avanzada del clásico **Pac-Man**, desarrollada como parte de mi formación en **Computación e Informática**. El objetivo fue ir más allá del clon básico, implementando una arquitectura modular y características técnicas modernas:
 
-* Lógica de videojuegos y ciclo de juego (Game Loop).
-* Inteligencia Artificial básica (comportamiento de los fantasmas).
-* Gestión de matrices y colisiones.
+* **Sistema de Clases:** Selección de personajes con atributos únicos (Normal, Tanque con armadura y Veloz).
+* **Habilidades Activas:** Implementación de proyectiles (fuego) y estados alterados (congelamiento).
+* **Motor de Escalado (Letterboxing):** El juego utiliza una pantalla virtual de resolución fija que se adapta y centra automáticamente en cualquier tamaño de ventana, manteniendo la relación de aspecto original.
+* **Persistencia de Datos:** Gestión de archivos para el guardado y ordenamiento (Bubble Sort) de los mejores puntajes.
 
-## 🎮 Controles
+### 📂 Estructura del Proyecto
+El código sigue una organización modular para facilitar el mantenimiento y la escalabilidad:
+
+```text
+📦 PacMan-Project
+ ┣ 📂 Niveles
+ ┃ ┣ 📜 mapa.c         # Renderizado del laberinto y gestión de celdas
+ ┃ ┗ 📜 mapa.h         # Matriz del nivel y definiciones de tiles
+ ┣ 📂 Personajes
+ ┃ ┣ 📜 ghost.c        # IA de fantasmas (Chase, Scatter, Frightened)
+ ┃ ┣ 📜 ghost.h        # Máquina de estados de los enemigos
+ ┃ ┣ 📜 pacman.c       # Físicas, movimiento y lógica de clases
+ ┃ ┗ 📜 pacman.h       # Estructuras del jugador y habilidades
+ ┣ 📂 assets           # Sprites .png y efectos de sonido .wav
+ ┣ 📜 config.h         # Constantes globales, rutas y configuración de colores
+ ┣ 📜 main.c           # Entry point, Game Loop y sistema de renderizado virtual
+ ┣ 📜 menu.c           # Implementación de la UI (Menús, Settings y Highscores)
+ ┣ 📜 menu.h           # Prototipos de las pantallas de interfaz
+ ┣ 📜 scores.txt       # Almacenamiento local de puntajes
+ ┗ 📜 types.h          # Definiciones de tipos, estructuras y enums
+```
+
+
+##  🎮 Controles
 
 | Tecla | Acción |
 | :---: | :--- |
@@ -23,6 +48,7 @@ Este proyecto es una recreación educativa del clásico **Pac-Man**. El objetivo
 | ➡️ `Derecha` | Mover hacia la derecha |
 | `P` | Pausar juego |
 | `R` | Reiniciar partida |
+
 
 ## 🛠️ Tecnologías Usadas
 * **Lenguaje:** C (Standard C99/C11)
