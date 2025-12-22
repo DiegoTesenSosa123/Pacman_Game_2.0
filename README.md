@@ -15,7 +15,7 @@ Este proyecto es una recreación avanzada del clásico **Pac-Man**, desarrollada
 * **Motor de Escalado (Letterboxing):** El juego utiliza una pantalla virtual de resolución fija que se adapta y centra automáticamente en cualquier tamaño de ventana, manteniendo la relación de aspecto original.
 * **Persistencia de Datos:** Gestión de archivos para el guardado y ordenamiento (Bubble Sort) de los mejores puntajes.
 
-## 📂 Estructura del Proyecto
+### 📂 Estructura del Proyecto
 El código sigue una organización modular para facilitar el mantenimiento y la escalabilidad:
 
 ```text
@@ -35,8 +35,10 @@ El código sigue una organización modular para facilitar el mantenimiento y la 
  ┣ 📜 menu.h           # Prototipos de las pantallas de interfaz
  ┣ 📜 scores.txt       # Almacenamiento local de puntajes
  ┗ 📜 types.h          # Definiciones de tipos, estructuras y enums
+```
 
-## 🎮 Controles
+
+##  🎮 Controles
 
 | Tecla | Acción |
 | :---: | :--- |
